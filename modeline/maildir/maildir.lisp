@@ -36,7 +36,7 @@
 
 (defun maildir-mailboxes (maildir)
   "Returns a list of all mailboxes in *maildir-path*."
-   (directory (merge-pathnames (make-pathname :directory '(:relative :wild))
+   (directory (merge-pathnames (make-pathname :directory '(:relative :wild "inbox"))
                                maildir)))
 
 (defun maildir-mailbox-dir (mailbox dir-name)
@@ -82,7 +82,9 @@
 
 (defun maildir-get-new ()
   (let ((total-new (reduce #'+ *maildir-new*)))
-    (format nil "^[~A~D^]" (if (plusp total-new) "^B" "") total-new)))
+    (if (eq total-new 0)
+        ""
+        (format nil "^[^3^B~A ~A~D^]" (code-char #xf0e0) (if (plusp total-new) "^B" "") total-new))))
 
 (defun maildir-get-cur ()
   (let ((total-cur (reduce #'+ *maildir-cur*)))
